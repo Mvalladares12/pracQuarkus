@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Path("/books")
-@Transactional
 public class BookResource {
 
     @Inject
@@ -18,13 +17,14 @@ public class BookResource {
     @GET
     public List<Book> index(@QueryParam("p") String title) {
         if (title == null) {
-            return repo.listAll(Sort.by("releaseDate", Sort.Direction.Descending));
+            return repo.listAll(Sort.by("releaseDate", Sort.Direction.Ascending));
 //        }else {
 //            return repo.list("numPages >= ?1", numPag);
 //        }
         }else {
             String filter="%"+title+"%";
-            return repo.list("title ILIKE ?1 OR description ILIKE ?2", filter, filter);
+            Sort sort = Sort.by("releaseDate", Sort.Direction.Descending);
+            return repo.list("title ILIKE ?1 OR description ILIKE ?2",sort, filter, filter);
         }
     }
 
@@ -47,12 +47,14 @@ public class BookResource {
 
     @DELETE
     @Path("{id}")
+    @Transactional
     public void delete(@PathParam("id") Long id){
         repo.deleteById(id);
     }
 
     @PUT
     @Path("{id}")
+    @Transactional
     public Book update(@PathParam("id") Long id, Book ub) {
         var updatedBook=repo.findById(id);
         if(updatedBook!=null){

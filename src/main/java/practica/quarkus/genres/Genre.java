@@ -1,16 +1,20 @@
 package practica.quarkus.genres;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@FilterDef(name = "name.like", parameters = @ParamDef(name = "name", type = String.class))
+@Filter(name = "name.like", condition = "LOWER(name) LIKE LOWER(:name)")
 public class Genre {
 
     @Id
@@ -20,10 +24,14 @@ public class Genre {
     private String name;
 
     @CreationTimestamp
+    //@JsonIgnore
     private LocalDateTime creationDate;
 
     @UpdateTimestamp
+    //@JsonIgnore
     private LocalDateTime modDate;
+
+
 
     public Long getId() {
         return id;
